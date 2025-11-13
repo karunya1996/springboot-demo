@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.NamedNativeQuery;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -26,6 +27,18 @@ indexes= {@Index(name="index_phone",columnList="phone"),
 		@Index(name="index_name_email",columnList="name,email")
 })
 @Entity
+@NamedNativeQuery(
+name ="UserDetails.getUserDetailsByName",
+query="SELECT user_name, phone FROM user_details WHERE user_name = :userFirstName",
+resultSetMapping ="UserDTOMapping")
+@SqlResultSetMapping(
+		name="UserDTOMapping",
+		classes=@ConstructorResult(
+				targetClass =UserDTO.class,
+				columns= {
+						@ColumnResult(name="user_name",type=String.class),
+						@ColumnResult(name="phone",type=String.class)
+				}))
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE,region="userDetailsCache")
 public class UserDetails {
 	
